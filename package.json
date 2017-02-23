@@ -1,0 +1,18 @@
+{
+  "name": "trade-service",
+  "version": "1.0.0",
+  "description": "trade-service",
+  "main": "market-service.js",
+  "dependencies": {
+    "bluebird": "^3.4.6",
+    "ws": "^2.1.0"
+  },
+  "devDependencies": {
+    "webpack": "^2.2.0-rc.3"
+  },
+  "scripts": {
+    "build-ws": "webpack --config webpack.config.js --progress --color"
+  },
+  "author": "CrazyNiger",
+  "license": "ISC"
+}
