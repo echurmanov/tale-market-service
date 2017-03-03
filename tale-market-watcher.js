@@ -145,7 +145,7 @@ class TaleMarketWatcher extends EventEmitter
    */
   parsePages(pageBodies) {
     const marketLotReg = /\<tr[^<]+\<td[^<]+\<span [^<]+card-label[^>]+\>\s+([^<]+)\s+\<\/span[^<]+\<[^<]+\<td>(\d+)\<\/td>[^<]+<[^<]+<span>([^<]+)<\/span><\/td>[^<]+<td>[^<]+<a\s+href=\"\/market\/(\d+)\/purchase\"/igm;
-    const getPageNumberReg = /\<a href=\"\/market\/\?page=(\d+)[^<]+\<\/a[^<]+\<\/li[^<]+\<\/ul\>/im;
+    const getPageNumberReg = /\<a href=\"\/market\/\?[^"]+page=(\d+)[^<]+\<\/a[^<]+\<\/li[^<]+\<\/ul\>/im;
     const pageNumberRes = getPageNumberReg.exec(pageBodies[0]);
     if (pageNumberRes) {
       this.lastMarketKnownPage = 1 * pageNumberRes[1];
@@ -181,7 +181,7 @@ class TaleMarketWatcher extends EventEmitter
           reject(err);
           return;
         }
-        const getPageNumberReg = /\<a href=\"\/market\/\?page=(\d+)[^<]+\<\/a[^<]+\<\/li[^<]+\<\/ul\>/im;
+        const getPageNumberReg = /\<a href=\"\/market\/\?[^"]+page=(\d+)[^<]+\<[^<]+\<[^<]+\<\/ul/im;
         const pageNumberRes = getPageNumberReg.exec(body);
         if (pageNumberRes) {
           const pagesNumber = 1 * pageNumberRes[1];

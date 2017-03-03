@@ -10,17 +10,6 @@ const TaleAccount = require("./account.js").Account;
 const url = require('url');
 const WebSocket = require('ws');
 
-const Router = require("./router.js").Router;
-
-const router = new Router();
-
-router.addRouter('get', '/test', function(req, res){
-  const lots = marketWatcher.debugCardLotMap();
-  for (let i = 0; i < lots.length; i++) {
-    res.write(lots[i] + "\n");
-  }
-  res.end();
-});
 
 const tale = new TaleAccount("trade-bot@webtricks.pro","he11ass55trade");
 const marketWatcher = new TaleMarketWatcher(tale);
@@ -31,6 +20,15 @@ const wss = new WebSocket.Server({
   port: PORT
 });
 
+wss.broadcast = function broadcast(data) {
+  console.log("Broadcast", data);
+  wss.clients.forEach(function each(client) {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(data);
+    }
+  });
+};
+
 function processWsConnections(ws) {
   ws.on('message', function incoming(message) {
     switch (message) {
@@ -40,6 +38,14 @@ function processWsConnections(ws) {
             "status": "ok",
             "message":"market-stat",
             "data": marketWatcher.lotCardMap
+          }
+        ));
+        break;
+      case "ping":
+        ws.send(JSON.stringify(
+          {
+            "status": "ok",
+            "message":"pong"
           }
         ));
         break;
@@ -74,6 +80,11 @@ function processLoginToTale(err, account) {
       });
       marketWatcher.on("LOT_PLACE", function(lot){
         console.log("Lot places", lot);
+        wss.broadcast(JSON.stringify({
+          "status": "ok",
+          "message": "new-lot",
+          "lot": lot
+        }))
       });
       marketWatcher.on("STATS_UPDATED", function(stats){
         console.log("Stats Updated");
